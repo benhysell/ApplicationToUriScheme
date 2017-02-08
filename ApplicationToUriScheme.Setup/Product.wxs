@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="772C7D74-57A8-41E7-BD8D-1470373C93F5" Name="Application To URI Scheme" Language="1033" Version="1.0.0.0" Manufacturer="Your Name Here" UpgradeCode="09E17CD6-392B-47B5-810C-7798EA657D1C">
+    <Package InstallerVersion="300" Compressed="yes" InstallScope="perMachine" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <!--Ensure .net 4.5 is installed-->
+    <PropertyRef Id="NETFRAMEWORK45" />
+
+    <Feature Id="ProductFeature" Title="Application To URI Scheme" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+    <UI Id="UserInterface">
+      <Property Id="WIXUI_INSTALLDIR" Value="TARGETDIR" />
+      <Property Id="WixUI_Mode" Value="Custom" />
+
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="9" Bold="yes" />
+      <TextStyle Id="WixUI_Font_Title"  FaceName="Tahoma" Size="9" Bold="yes" />
+
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="UserExit" />
+
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="EndDialog" Value="Return" Order="2"></Publish>
+    </UI>
+    <UIRef Id="WixUI_Common" />
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id ="YourCompany" Name="Your Company">
+          <Directory Id="INSTALLFOLDER" Name="Application To URI Scheme" />
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="ProductComponent">
+        <File Id="ApplicationToUriScheme.exe" Name="ApplicationToUriScheme.exe" Source="$(var.ApplicationToUriScheme.TargetDir)\ApplicationToUriScheme.exe" />
+        <File Id="ApplicationToUriScheme.exe.config" Name="ApplicationToUriScheme.exe.config" Source="$(var.ApplicationToUriScheme.TargetDir)\ApplicationToUriScheme.exe.config" />
+      </Component>
+      <Component Id="RegistryEntries">
+        <RegistryKey Root="HKCR"
+                     Key="ApplicationToUriScheme"
+              Action="createAndRemoveOnUninstall">
+          <RegistryValue Type="string" Value="URL:ApplicationToUriScheme Protocol"/>
+          <RegistryValue Type="string" Name="URL Protocol" Value=""/>
+        </RegistryKey>
+        <RegistryKey Root="HKCR"
+                     Key="ApplicationToUriScheme\DefaultIcon"
+              Action="createAndRemoveOnUninstall">
+          <RegistryValue Type="string" Value="&quot;[INSTALLFOLDER]ApplicationToUriScheme.exe&quot;, 0"/>
+        </RegistryKey>
+        <RegistryKey Root="HKCR"
+                     Key="ApplicationToUriScheme\shell\open\command"
+              Action="createAndRemoveOnUninstall">
+          <RegistryValue Type="string" Value="&quot;[INSTALLFOLDER]ApplicationToUriScheme.exe&quot; &quot;%1&quot;"/>
+        </RegistryKey>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
